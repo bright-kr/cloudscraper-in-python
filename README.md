@@ -1,8 +1,8 @@
 # Using cloudscraper in Python
 
-[![Bright Data Promo](https://github.com/luminati-io/LinkedIn-Scraper/raw/main/Proxies%20and%20scrapers%20GitHub%20bonus%20banner.png)](https://brightdata.com/)
+[![Bright Data Promo](https://github.com/luminati-io/LinkedIn-Scraper/raw/main/Proxies%20and%20scrapers%20GitHub%20bonus%20banner.png)](https://brightdata.co.kr/)
 
-This guide explains how to use the `cloudscraper` Python library to bypass Cloudflare’s protection and handle errors:
+이 가이드는 `cloudscraper` Python 라이브러리를 사용하여 Cloudflare의 보호를 우회하고 오류를 처리하는 방법을 설명합니다:
 
 - [Install Prerequisites](#install-prerequisites)
 - [Write Initial Scraping Code](#write-initial-scraping-code)
@@ -19,7 +19,7 @@ This guide explains how to use the `cloudscraper` Python library to bypass Cloud
 
 ## Install Prerequisites
 
-Ensure you have Python 3 installed, then install the necessary packages:
+Python 3가 설치되어 있는지 확인한 다음, 필요한 패키지를 설치합니다:
 
 ```bash
 pip install tqdm==4.66.5 requests==2.32.3 beautifulsoup4==4.12.3
@@ -27,7 +27,7 @@ pip install tqdm==4.66.5 requests==2.32.3 beautifulsoup4==4.12.3
 
 ## Write Initial Scraping Code
 
-This guide assumes you're scraping metadata from news articles published on a specific date on the [ChannelsTV website](https://www.channelstv.com/). Below is an initial Python script:
+이 가이드는 [ChannelsTV website](https://www.channelstv.com/)에서 특정 날짜에 게시된 뉴스 기사로부터 메타데이터를 スクレイピング한다고 가정합니다. 아래는 초기 Python 스크립트입니다:
 
 ```python
 import requests
@@ -107,17 +107,17 @@ print("Samples:")
 print(scraped_articles[:2])
 ```
 
-This script defines three key functions for scraping. The `extract_article_data` function retrieves content from an article’s webpage, extracting metadata such as title, publication date, tags, and categories into a dictionary.
+이 스크립트는 スクレイピング을 위한 세 가지 핵심 함수를 정의합니다. `extract_article_data` 함수는 기사 웹페이지에서 콘텐츠를 가져와 제목, 게시 날짜, 태그, 카테고리와 같은 메타데이터를 딕셔너리로 추출합니다.
 
-Next, the `process_page` function iterates through all articles on a given page, extracting metadata using `extract_article_data` and compiling the results into a list.
+다음으로 `process_page` 함수는 특정 페이지에 있는 모든 기사를 순회하면서 `extract_article_data`를 사용해 메타데이터를 추출하고, 결과를 리스트로 취합합니다.
 
-Finally, the `scrape_articles_per_day` function systematically navigates through paginated results, incrementing the page number in a `while` loop until no more pages are found.
+마지막으로 `scrape_articles_per_day` 함수는 페이지네이션된 결과를 체계적으로 탐색하며, 더 이상 페이지가 없을 때까지 `while` 루프에서 페이지 번호를 증가시킵니다.
 
-To execute the scraper, the script specifies a target URL with a filtering date of August 1, 2024. A user-agent header is set, and the `scrape_articles_per_day` function is called with the provided URL and headers. The total number of articles scraped is printed, along with a preview of the first two results.
+스크레이퍼를 실행하기 위해 스크립트는 2024년 8월 1일이라는 필터링 날짜가 포함된 대상 URL을 지정합니다. User-Agent 헤더를 설정한 뒤, 제공된 URL과 헤더로 `scrape_articles_per_day` 함수를 호출합니다. スクレイピング된 전체 기사 수가 출력되며, 처음 두 개 결과의 미리보기도 함께 출력됩니다.
 
-However, the script does not work as expected because the ChannelsTV website employs Cloudflare protection, blocking direct HTTP requests made by `extract_article_data` and `scrape_articles_per_day`.
+그러나 ChannelsTV website는 Cloudflare 보호를 사용하므로, `extract_article_data` 및 `scrape_articles_per_day`에서 수행되는 직접적인 HTTP 리クエ스트가 차단되어 스크립트가 예상대로 동작하지 않습니다.
 
-When running the script, the output typically appears as follows:
+스크립트를 실행하면 일반적으로 출력은 다음과 같이 나타납니다:
 
 ```
 0 articles were scraped.
@@ -127,13 +127,13 @@ Samples:
 
 ## Incorporate cloudscraper
 
-Install `cloudscraper` to bypass Cloudflare:
+Cloudflare를 우회하기 위해 `cloudscraper`를 설치합니다:
 
 ```bash
 pip install cloudscraper==1.2.71
 ```
 
-Modify the script to use `cloudscraper`:
+`cloudscraper`를 사용하도록 스크립트를 수정합니다:
 
 ```python
 import cloudscraper
@@ -153,18 +153,18 @@ def fetch_html_content(url, headers):
         return None
 ```
 
-This function, `fetch_html_content`, takes a URL and request headers as input. It attempts to retrieve the webpage using `cloudscraper.create_scraper()`. If the request is successful (status code 200), the response is returned; otherwise, an error message is printed, and `None` is returned. If an exception occurs, the error is caught and displayed before returning `None`.
+이 함수 `fetch_html_content`는 URL과 리クエ스트 헤더를 입력으로 받습니다. `cloudscraper.create_scraper()`를 사용해 웹페이지를 가져오려고 시도합니다. 리クエ스트가 성공(상태 코드 200)하면 レスポンス를 반환하고, 그렇지 않으면 오류 메시지를 출력한 뒤 `None`을 반환합니다. 예외가 발생하면 오류를 캐치하여 표시한 다음 `None`을 반환합니다.
 
-Following this update, all `requests.get` calls are replaced with `fetch_html_content`, ensuring compatibility with Cloudflare-protected websites. The first modification occurs in the `extract_article_data` function, as demonstrated above.
+이 업데이트 이후에는 모든 `requests.get` 호출을 `fetch_html_content`로 교체하여 Cloudflare로 보호되는 website와의 호환성을 보장합니다. 첫 번째 수정은 위에示된 것처럼 `extract_article_data` 함수에서 이루어집니다.
 
-Now, replace `requests.get` calls with `fetch_html_content` in your scraping functions.
+이제 스크레이핑 함수에서 `requests.get` 호출을 `fetch_html_content`로 교체합니다.
 
 ```python
 def extract_article_data(article_source, headers):
     response = fetch_html_content(article_source, headers)
 ```
 
-After that, replace the `requests.get` call in your `scrape_articles_per_day` function like this:
+그 다음, `scrape_articles_per_day` 함수에서 `requests.get` 호출을 다음과 같이 교체합니다:
 
 ```python
 def scrape_articles_per_day(base_url, headers):
@@ -176,9 +176,9 @@ def scrape_articles_per_day(base_url, headers):
         response = fetch_html_content(page_url, headers)
 ```
 
-By defining this function, the cloudscraper library can help you evade Cloudflare’s restrictions.
+이 함수를 정의하면 cloudscraper 라이브러리가 Cloudflare의 제한을 회피하는 데 도움이 됩니다.
 
-When you run the code, your output looks like this:
+코드를 실행하면 출력은 다음과 같이 표시됩니다:
 
 ```
 Failed to fetch URL: https://www.channelstv.com/2024/08/01//page/5. Status code: 404
@@ -200,7 +200,7 @@ Samples:
 
 ### Proxies
 
-With cloudscraper, you can define proxies and pass them to your already created `cloudscraper` object like this:
+cloudscraper를 사용하면 プロキシ를 정의하고, 이미 생성한 `cloudscraper` 객체에 다음과 같이 전달할 수 있습니다:
 
 ```python
 scraper = cloudscraper.create_scraper()
@@ -211,11 +211,11 @@ proxy = {
 response = scraper.get(URL, proxies=proxy)
 ```
 
-Here, you start by defining a scraper object with default values. Then, you define a proxy dictionary with `http` and `https` proxies. After that, you pass the proxy dictionary object to the `scraper.get` method as you would with a regular `request.get` method.
+여기서는 기본 값으로 스크레이퍼 객체를 먼저 정의합니다. 그런 다음 `http` 및 `https` プロキシ가 포함된 プロキシ 딕셔너리를 정의합니다. 이후 일반적인 `request.get` 메서드에서처럼 `scraper.get` 메서드에 `proxies`로 プロキシ 딕셔너리 객체를 전달합니다.
 
 ### Change the User Agent and JavaScript Interpreter
 
-The cloudscraper library can autogenerate user agents and lets you specify the JavaScript interpreter and engine you use with your scraper. Here is some example code:
+cloudscraper 라이브러리는 user agent를 자동 생성할 수 있으며, 스크레이퍼에서 사용할 JavaScript interpreter와 엔진을 지정할 수 있게 해줍니다. 다음은 예시 코드입니다:
 
 ```python
 scraper = cloudscraper.create_scraper(
@@ -228,11 +228,11 @@ scraper = cloudscraper.create_scraper(
 )
 ```
 
-The above script sets the interpreter as `"nodejs"` and passes a dictionary to the browser parameter. The browser is set to Chrome and the platform is set to `"ios"`. The desktop parameter is set to `False` which suggests that the browser runs on mobile.
+위 스크립트는 interpreter를 `"nodejs"`로 설정하고, browser パラメータ에 딕셔너리를 전달합니다. 브라우저는 Chrome으로, 플랫폼은 `"ios"`로 설정됩니다. desktop パラメータ는 `False`로 설정되어 브라우저가 모바일에서 실행됨을 시사합니다.
 
 ### Handling CAPTCHAs
 
-The cloudscraper library supports third-party CAPTCHA solvers to bypass reCAPTCHA, hCaptcha, and more. The following snippet shows you how to modify your scraper to handle CAPTCHA:
+cloudscraper 라이브러리는 reCAPTCHA, hCaptcha 등을 우회하기 위해 서드파티 CAPTCHA solver를 지원합니다. 다음 스니펫은 CAPTCHA를 처리하도록 스크레이퍼를 수정하는 방법을 보여줍니다:
 
 ```python
 scraper = cloudscraper.create_scraper(
@@ -243,25 +243,25 @@ scraper = cloudscraper.create_scraper(
 )
 ```
 
-The code uses Capsolver for CAPTCHA provider and the Capsolver API key. Both values are stored in a dictionary and passed to the CAPTCHA parameter in the `cloudscraper.create_scraper` method.
+이 코드는 CAPTCHA provider로 Capsolver를 사용하며 Capsolver API key를 사용합니다. 두 값은 딕셔너리에 저장되어 `cloudscraper.create_scraper` 메서드의 CAPTCHA パラメータ로 전달됩니다.
 
 ## Common cloudscraper Errors
 
 ### `module not found`
 
-Ensure `cloudscraper` is installed:
+`cloudscraper`가 설치되어 있는지 확인합니다:
 
 ```sh
 pip install cloudscraper
 ```
 
-Then, check if your virtual environment is activated. On Windows:
+그 다음 가상 환경이 활성화되어 있는지 확인합니다. Windows에서는 다음을 실행합니다:
 
 ```sh
 .<venv-name>\Scripts\activate.bat
 ```
 
-On Linux or macOS:
+Linux 또는 macOS에서는 다음을 실행합니다:
 
 ```sh
 source <venv-name>/bin/activate
@@ -269,7 +269,7 @@ source <venv-name>/bin/activate
 
 ### `cloudscraper can’t bypass the latest Cloudflare version`
 
-Update the package:
+패키지를 업데이트합니다:
 
 ```sh
 pip install -U cloudscraper
@@ -277,7 +277,7 @@ pip install -U cloudscraper
 
 ## cloudscraper Alternatives
 
-Bright Data provides robust proxy networks to bypass Cloudflare. Create an account, configure it, and get your API credentials. Then, use those credentials to access the data at your target URL like this:
+Bright Data는 Cloudflare를 우회하기 위한 견고한 プロキシ 네트워크를 제공합니다. 계정을 생성하고 설정한 다음 API 자격 증명을 발급받습니다. 그 다음 해당 자격 증명을 사용하여 아래와 같이 대상 URL의 데이터에 접근합니다:
 
 ```python
 import requests
@@ -298,10 +298,10 @@ proxies = {
 response = requests.get(URL, proxies=proxies)
 ```
 
-Here, you make a `GET` request with the Python Requests library and pass in proxies via the `proxies` parameter.
+여기서는 Python Requests 라이브러리로 `GET` 리クエ스트를 수행하고, `proxies` パラメータ로 プロキシ를 전달합니다.
 
 ## Conclusion
 
-While `cloudscraper` is useful, it has its limits. Consider trying Bright Data proxy network and [Web Unlocker](https://brightdata.com/products/web-unlocker) to access Cloudflare-protected sites.
+`cloudscraper`는 유용하지만 한계가 있습니다. Cloudflare로 보호되는 사이트에 접근하려면 Bright Data プロキシ 네트워크와 [Web Unlocker](https://brightdata.co.kr/products/web-unlocker)를 사용해 보시는 것을 고려하시기 바랍니다.
 
-Start with a free trial today!
+지금 바로 무료 체험을 시작해 보시기 바랍니다!
