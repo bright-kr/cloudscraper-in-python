@@ -1,6 +1,6 @@
 # Using cloudscraper in Python
 
-[![Bright Data Promo](https://github.com/luminati-io/LinkedIn-Scraper/raw/main/Proxies%20and%20scrapers%20GitHub%20bonus%20banner.png)](https://brightdata.co.kr/)
+[![Bright Data Promo](https://github.com/bright-kr/LinkedIn-Scraper/raw/main/Proxies%20and%20scrapers%20GitHub%20bonus%20banner.png)](https://brightdata.co.kr/)
 
 이 가이드는 `cloudscraper` Python 라이브러리를 사용하여 Cloudflare의 보호를 우회하고 오류를 처리하는 방법을 설명합니다:
 
